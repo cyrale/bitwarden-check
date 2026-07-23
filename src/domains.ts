@@ -11,14 +11,15 @@ type Domain = {
  * Extract all unique domains from Bitwarden vault items
  */
 export function extractDomainsFromVault(vaultItems: BitwardenItemLogin[]): Domain[] {
-  const domains = new Set<Domain>();
+  const domains = new Map<string, Domain>();
 
   for (const item of vaultItems) {
     if (Array.isArray(item.login.uris)) {
       for (const uriObj of item.login.uris) {
         try {
           const url = new URL(uriObj.uri);
-          domains.add({ protocol: url.protocol, hostname: url.hostname });
+          const key = `${url.protocol}//${url.hostname}`;
+          domains.set(key, { protocol: url.protocol, hostname: url.hostname });
         } catch {
           // Ignore invalid URLs
         }
@@ -26,7 +27,7 @@ export function extractDomainsFromVault(vaultItems: BitwardenItemLogin[]): Domai
     }
   }
 
-  return Array.from(domains);
+  return Array.from(domains.values());
 }
 
 /**
@@ -34,7 +35,9 @@ export function extractDomainsFromVault(vaultItems: BitwardenItemLogin[]): Domai
  */
 export async function isDomainReachable(domain: Domain): Promise<boolean> {
   try {
-    await axios.head(`${domain.protocol}://${domain.hostname}`, { timeout: 5000 });
+    const protocol = domain.protocol.endsWith(':') ? domain.protocol : `${domain.protocol}:`;
+
+    await axios.head(`${protocol}//${domain.hostname}`, { timeout: 5000 });
     return true;
   } catch {
     return false;

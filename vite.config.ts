@@ -5,6 +5,6 @@ export default defineConfig({
     // options de configuration de vitest
     environment: 'node',
     globals: true, // pour utiliser les fonctions expect, describe, etc. sans les importer
-    include: ['./test/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: ['./test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
   },
 });
