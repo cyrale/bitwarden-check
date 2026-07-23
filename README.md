@@ -2,16 +2,12 @@
 
 A Node.js/TypeScript CLI tool that audits a Bitwarden vault. Currently supports the `domains` sub-command, which checks the accessibility of the domains associated with vault items via the Bitwarden API.
 
----
-
 ## Commands
 
 - `bitwarden-check domains` — Extracts hostnames from vault item URIs and checks whether each one is currently reachable. Useful to spot logins pointing to dead/decommissioned domains.
   - `--api-url <url>` — Bitwarden API base URL (default: `BITWARDEN_API_URL` env var, or `https://api.bitwarden.com`)
 
 <!-- - `bitwarden-check ips` — (planned) ... -->
-
----
 
 ## Prerequisites
 
@@ -32,8 +28,6 @@ mise install
 npm install
 ```
 
----
-
 ## Configuration
 
 Copy the `.env.example` file to `.env` and adjust the values as needed:
@@ -50,8 +44,6 @@ BITWARDEN_API_URL=https://api.bitwarden.com
 
 > ⚠️ **Never commit your `.env` file.** It contains secrets and must stay local. Only `.env.example` (with no real values) is committed.
 
----
-
 ## Usage
 
 ```bash
@@ -66,8 +58,6 @@ npm start -- domains --api-url https://api.bitwarden.com
 ```
 
 During execution you will be prompted interactively for your Bitwarden master password. The input is **masked** and never displayed in plain text — it is never logged or persisted anywhere.
-
----
 
 ## Available npm Scripts
 
@@ -86,8 +76,6 @@ During execution you will be prompted interactively for your Bitwarden master pa
 | `npm run coverage`   | Run tests and generate a coverage report                              |
 
 > **Convention:** a script without a suffix (e.g. `lint`, `format`) only checks and never auto-fixes. A script with the `:fix` suffix (e.g. `lint:fix`, `format:fix`) applies automatic corrections. This applies to any future script as well.
-
----
 
 ## Contributing
 
@@ -108,8 +96,6 @@ npm run format:fix
 ```
 
 Fix any remaining issues before opening a pull request.
-
----
 
 ## Security
 
