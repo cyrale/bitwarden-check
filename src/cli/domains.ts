@@ -3,7 +3,7 @@
 import inquirer from 'inquirer';
 import type { Command } from 'commander';
 
-import { config, getVaultItems, test } from '../bitwarden-api';
+import { config, getVaultItems, lock, test } from '../bitwarden-api';
 import { extractDomainsFromVault, isDomainReachable } from '../domains';
 
 type DomainsOptions = {
@@ -34,12 +34,16 @@ export function registerDomainsCommand(program: Command): void {
 
       await config(options.apiUrl, password);
 
-      const vaultItems = await getVaultItems();
-      const domains = extractDomainsFromVault(vaultItems.filter((item) => 'login' in item));
+      try {
+        const vaultItems = await getVaultItems();
+        const domains = extractDomainsFromVault(vaultItems.filter((item) => 'login' in item));
 
-      for (const domain of domains) {
-        const reachable = await isDomainReachable(domain);
-        console.log(`${domain.protocol}//${domain.hostname}: ${reachable ? 'OK' : 'UNREACHABLE'}`);
+        for (const domain of domains) {
+          const reachable = await isDomainReachable(domain);
+          console.log(`${domain.protocol}//${domain.hostname}: ${reachable ? 'OK' : 'UNREACHABLE'}`);
+        }
+      } finally {
+        await lock();
       }
     });
 }

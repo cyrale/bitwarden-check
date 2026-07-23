@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const promptMock = vi.fn();
 const configMock = vi.fn();
 const getVaultItemsMock = vi.fn();
+const lockMock = vi.fn();
 const testMock = vi.fn();
 const extractDomainsFromVaultMock = vi.fn();
 const isDomainReachableMock = vi.fn();
@@ -18,6 +19,7 @@ vi.mock('inquirer', () => ({
 vi.mock('../../src/bitwarden-api', () => ({
   config: configMock,
   getVaultItems: getVaultItemsMock,
+  lock: lockMock,
   test: testMock,
 }));
 
@@ -42,6 +44,7 @@ describe('domains CLI command', () => {
 
     testMock.mockResolvedValue(true);
     configMock.mockResolvedValue(true);
+    lockMock.mockResolvedValue(true);
     getVaultItemsMock.mockResolvedValue([
       { login: { uris: [{ uri: 'https://example.com', match: null }] } },
       { secureNote: { type: 0 } },
@@ -80,6 +83,7 @@ describe('domains CLI command', () => {
     expect(isDomainReachableMock).toHaveBeenNthCalledWith(2, { protocol: 'http:', hostname: 'intranet.local' });
     expect(consoleLogMock).toHaveBeenNthCalledWith(1, 'https://example.com: OK');
     expect(consoleLogMock).toHaveBeenNthCalledWith(2, 'http://intranet.local: UNREACHABLE');
+    expect(lockMock).toHaveBeenCalledTimes(1);
   });
 
   it('rejects empty passwords through the prompt validation', async () => {
