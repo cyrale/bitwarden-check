@@ -94,10 +94,10 @@ During execution you will be prompted interactively for your Bitwarden master pa
 Before committing, always run the check scripts:
 
 ```bash
+npm run typecheck
 npm run lint
 npm run format
-npm run typecheck
-npm run test
+npm run test:run
 ```
 
 If lint or format:check report issues, you can often fix them automatically:
