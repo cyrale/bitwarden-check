@@ -1,59 +1,17 @@
-// Main application to check Bitwarden domains via the API
-import inquirer from 'inquirer';
-import minimist from 'minimist';
+#!/usr/bin/env node
+// Entry point: registers subcommands and delegates to commander
+import 'dotenv/config';
+import { Command } from 'commander';
 
-import { config, unlock, getVaultItems } from './bitwardenApi';
-import { extractDomainsFromVault, isDomainReachable } from './domainUtils';
+import { registerDomainsCommand } from './cli/domains';
 
-// Parse command line arguments using minimist
-const args = minimist(process.argv.slice(2));
-// Use --api-url argument or default
-const BITWARDEN_API_URL = args['api-url'] || 'https://api.bitwarden.com';
-// Global access token for authentication
-let sessionToken: string | null = null;
+import pkg from '../package.json';
 
-/**
- * Main function: prompts for credentials, authenticates, and displays vault items
- */
-async function main() {
-  try {
-    // Prompt the user for email and password via CLI
-    const answers = await inquirer.prompt([
-      {
-        type: 'password',
-        name: 'password',
-        message: 'Password:',
-        mask: '*',
-        validate: async (input) => {
-          if (input.length === 0) {
-            return 'Password cannot be empty';
-          }
+const program = new Command();
 
-          try {
-            await unlock(BITWARDEN_API_URL, input);
-          } catch (error) {
-            return 'Invalid password';
-          }
+program.name('bitwarden-check').description('CLI to audit Bitwarden vault items').version(pkg.version);
 
-          return true;
-        },
-      },
-    ]);
+registerDomainsCommand(program);
+// registerIpsCommand(program);
 
-    await config(BITWARDEN_API_URL, answers.password);
-
-    const vaultItems = await getVaultItems();
-    const domains = extractDomainsFromVault(vaultItems.data || vaultItems);
-    console.log(`Found ${domains.length} unique domains. Checking availability...`);
-
-    for (const domain of domains) {
-      const ok = await isDomainReachable(domain);
-      console.log(`${domain}: ${ok ? 'OK' : 'NOT REACHABLE'}`);
-    }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
-
-// Start the application
-main();
+program.parse();

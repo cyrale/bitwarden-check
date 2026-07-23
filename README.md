@@ -1,57 +1,117 @@
-# Bitwarden API App
+# bitwarden-check
 
-This project is a TypeScript application that interacts with the Bitwarden API. It provides functionality to authenticate users and manage vault items.
+A Node.js/TypeScript CLI tool that audits a Bitwarden vault. Currently supports the `domains` sub-command, which checks the accessibility of the domains associated with vault items via the Bitwarden API.
 
-## Project Structure
+---
 
+## Commands
+
+- `bitwarden-check domains` — Extracts hostnames from vault item URIs and checks whether each one is currently reachable. Useful to spot logins pointing to dead/decommissioned domains.
+  - `--api-url <url>` — Bitwarden API base URL (default: `BITWARDEN_API_URL` env var, or `https://api.bitwarden.com`)
+
+<!-- - `bitwarden-check ips` — (planned) ... -->
+
+---
+
+## Prerequisites
+
+- **Node.js** (managed via [`mise`](https://mise.jdx.dev/))
+- **npm**
+
+## Installation
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd bitwarden-check
+
+# Install Node.js version via mise (reads mise.toml)
+mise install
+
+# Install dependencies
+npm install
 ```
-bitwarden-api-app
-├── src
-│   ├── index.ts          # Entry point of the application
-│   └── types
-│       └── index.ts      # Type definitions for Bitwarden API
-├── package.json           # NPM configuration file
-├── tsconfig.json          # TypeScript configuration file
-└── README.md              # Project documentation
+
+---
+
+## Configuration
+
+Copy the `.env.example` file to `.env` and adjust the values as needed:
+
+```bash
+cp .env.example .env
 ```
 
-## Setup Instructions
+**`.env.example`**
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/bitwarden-api-app.git
-   ```
+```env
+BITWARDEN_API_URL=https://api.bitwarden.com
+```
 
-2. Navigate to the project directory:
-   ```
-   cd bitwarden-api-app
-   ```
+> ⚠️ **Never commit your `.env` file.** It contains secrets and must stay local. Only `.env.example` (with no real values) is committed.
 
-3. Install the dependencies:
-   ```
-   npm install
-   ```
-
-4. Configure your Bitwarden API credentials in the environment variables or a configuration file.
+---
 
 ## Usage
 
-To start the application, run:
+```bash
+# Run the domains audit sub-command
+npm start -- domains
+
+# Or directly via tsx
+npx tsx src/index.ts domains
+
+# With a custom API URL
+npm start -- domains --api-url https://api.bitwarden.com
 ```
-npm start
-```
 
-This will initialize the application and connect to the Bitwarden API.
+During execution you will be prompted interactively for your Bitwarden master password. The input is **masked** and never displayed in plain text — it is never logged or persisted anywhere.
 
-## API Interaction
+---
 
-The application supports the following functionalities:
-- User authentication
-- Retrieving vault items
-- Adding and updating vault items
+## Available npm Scripts
 
-Refer to the source code in `src/index.ts` for detailed implementation and usage examples. 
+| Script               | What it does                                                          |
+| -------------------- | --------------------------------------------------------------------- |
+| `npm start`          | Build and run the CLI (production-like)                               |
+| `npm run dev`        | Run the CLI directly from TypeScript (for local development, via tsx) |
+| `npm run build`      | Compile TypeScript to JavaScript                                      |
+| `npm run typecheck`  | Check types without emitting files                                    |
+| `npm run lint`       | Lint (check only, no auto-fix)                                        |
+| `npm run lint:fix`   | Lint + automatically fix issues where possible                        |
+| `npm run format`     | Check formatting without modifying files                              |
+| `npm run format:fix` | Format code with Prettier                                             |
+| `npm run test`       | Run tests with Vitest                                                 |
+| `npm run test:ui`    | Run tests with Vitest's UI                                            |
+| `npm run coverage`   | Run tests and generate a coverage report                              |
+
+> **Convention:** a script without a suffix (e.g. `lint`, `format`) only checks and never auto-fixes. A script with the `:fix` suffix (e.g. `lint:fix`, `format:fix`) applies automatic corrections. This applies to any future script as well.
+
+---
 
 ## Contributing
 
-Feel free to submit issues or pull requests to improve the project.
+Before committing, always run the check scripts:
+
+```bash
+npm run lint
+npm run format
+npm run typecheck
+npm run test
+```
+
+If lint or format:check report issues, you can often fix them automatically:
+
+```bash
+npm run lint:fix
+npm run format:fix
+```
+
+Fix any remaining issues before opening a pull request.
+
+---
+
+## Security
+
+- **Never commit a `.env` file.** Only `.env.example` (with placeholder values) should be tracked.
+- Your vault master password is requested interactively and is **never logged or stored in plain text**.

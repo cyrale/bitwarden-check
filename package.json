@@ -1,39 +1,46 @@
 {
-  "name": "bitwarden-api-app",
+  "name": "bitwarden-check",
   "version": "1.0.0",
-  "description": "A TypeScript application for interacting with the Bitwarden API.",
+  "description": "CLI tool to audit Bitwarden vault items.",
   "author": {
     "name": "Cyril Jacquesson",
     "email": "cyril@jacquesson.me"
   },
   "license": "MIT",
+  "type": "commonjs",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --check src",
+    "format:fix": "prettier --write src",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "axios": "^1.9.0",
-    "dotenv": "^16.5.0",
-    "inquirer": "^12.6.3",
-    "minimist": "^1.2.8"
+    "axios": "^1.18.1",
+    "commander": "^15.0.0",
+    "dotenv": "^17.4.2",
+    "inquirer": "^14.0.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "@types/minimist": "^1.2.5",
-    "@types/node": "22.18.0",
-    "@typescript-eslint/eslint-plugin": "^8.41.0",
-    "@typescript-eslint/parser": "^8.41.0",
-    "eslint": "^9.34.0",
-    "globals": "^16.3.0",
-    "prettier": "^3.6.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.41.0"
-  },
-  "volta": {
-    "node": "22.18.0",
-    "npm": "10.9.3"
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.13.3",
+    "@typescript-eslint/eslint-plugin": "^8.65.0",
+    "@typescript-eslint/parser": "^8.65.0",
+    "@vitest/ui": "^4.1.10",
+    "eslint": "^10.0.1",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^4.1.10"
   }
 }

@@ -1,3 +1,8 @@
+/**
+ * Types and enums matching the Bitwarden Vault Management API.
+ * @see https://bitwarden.com/help/vault-management-api/
+ */
+
 import axios from 'axios';
 
 export enum BitwardenItemType {
