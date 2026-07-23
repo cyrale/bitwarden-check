@@ -104,7 +104,7 @@ export async function config(apiUrl: string, password: string): Promise<boolean>
       const sessionKey = await unlock(password);
 
       session.key = sessionKey;
-      session.expiration = Date.now() + 60 * 60; // 1 minute
+      session.expiration = Date.now() + 60_000; // 1 minute
 
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${sessionKey}`;
     }
